@@ -1,0 +1,71 @@
+﻿
+@using StokTakip_Deneme_.Models.Entity
+@model List<StokTakip_Deneme_.Models.Entity.Markalar>
+
+@using StokTakip_Deneme_.Models.Entity
+
+
+@{
+    ViewBag.Title = "Markalar";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f0f0f0;
+        }
+
+        .div {
+            background-color: #e0e0e0;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    
+    <div class="container">
+       
+        <h2>@ViewBag.Title</h2>
+        
+        <body>
+
+            @foreach (var item in Model)
+            {
+                <div class="div">
+                    <tr>
+                        <p><b>ID: </b>@item.ID</p>
+                        <p><b>KATEGORİ ID: </b>@item.Kategoriler.Kategori</p>
+                        <p><b>MARKA: </b>@item.Marka</p>
+                        <p><b>AÇIKLAMA: </b>@item.Aciklama</p>
+
+
+                    </tr>
+                    <tr>
+                        <td> <a href="/Markalar/SilBilgiGetir/@item.ID" class="btn btn-danger">Sil</a></td>
+                        <td> <a href="/Markalar/GuncelleBilgiGetir/@item.ID" class="btn btn-warning">Güncelle</a></td>
+                    </tr>
+                </div>
+            }
+        </body>
+        <div style="width: 250px ">
+
+            <a href="/Markalar/Ekle/" class=" btn btn-success" style="margin-top:10px;">
+                Marka Ekle
+            </a>
+
+
+        </div>
+    </div>
+
+</body>
+</html>
+
+
+
+

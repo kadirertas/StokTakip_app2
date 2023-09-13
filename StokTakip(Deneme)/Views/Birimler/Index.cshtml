@@ -1,0 +1,47 @@
+﻿@using StokTakip_Deneme_.Models.Entity
+@model List<StokTakip_Deneme_.Models.Entity.Birimler>
+
+@{
+    ViewBag.Title = "Birim Listesi";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f0f0f0; 
+        }
+
+        .div {
+            background-color: #e0e0e0; 
+            padding: 10px;
+            margin-bottom: 10px; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>@ViewBag.Title</h2>
+
+        @foreach (var item in Model)
+        {
+            <div class="div">
+                <p><b>ID:</b> @item.ID</p>
+                <p><b>Birim:</b> @item.Birim</p>
+                <p><b>Açıklama:</b> @item.Aciklama</p>
+                <a href="/Birimler/SilBilgiGetir/@item.ID" class="btn btn-danger">Sil</a>
+                <a href="/Birimler/GuncelleBilgiGetir/@item.ID" class="btn btn-warning">Güncelle</a>
+            </div>
+        }
+
+        <div style="width: 250px; margin-top: 10px;">
+            <a href="/Birimler/Ekle" class="btn btn-success">Birim Ekle</a>
+        </div>
+    </div>
+
+</body>
+</html>

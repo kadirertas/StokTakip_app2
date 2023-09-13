@@ -1,0 +1,87 @@
+﻿@model List<StokTakip_Deneme_.Models.Entity.Urunler>
+
+@using StokTakip_Deneme_.Models.Entity
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f0f0f0;
+        }
+
+        .div {
+            background-color: #e0e0e0;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Ürün Listeleme </h2>
+        @foreach (var item in Model)
+        {
+            <div class="div">
+                <tr>
+                    <p><b>ID: </b>@item.ID</p>
+                    <P><b>KATEGORİ: </b>@item.Kategoriler.Kategori</P>
+                    <p><b>MARKA: </b>@item.Markalar.Marka</p>
+                    <p><b>ÜRÜN ADI: </b>@item.UrunAdi</p>
+                </tr>
+                <div id="details-@item.ID" style="display: none;">
+
+                    <p><b>BARKOD NO: </b>@item.BarkodNo</p>
+                    <p><b>ALIŞ FİYATI: </b>@item.AlisFiyati</p>
+                    <p><b>SATIŞ FİYATI: </b>@item.SatisFiyati</p>
+                    <p><b>MİKTARI: </b>@item.Miktari</p>
+                    <p><b>KDV: </b>% @item.KDV</p>
+                    <p><b>BİRİM: </b>@item.Birimler.Birim</p>
+                    <p><b>TARİH: </b>@item.Tarih</p>
+                    <p><b>AÇIKLAMA: </b>@item.Aciklama</p>
+                </div>
+                @if (User.IsInRole("ceo") || User.IsInRole("personel"))
+                {
+                    <th><a href="/Urunler/SilBilgiGetir/@item.ID" class="btn btn-danger">Sil</a></th>
+                    <th><a href="/Urunler/GuncelleBilgiGetir/@item.ID" class="btn btn-warning">Güncelle</a></th>
+                }
+
+                <button class="btn btn-info" onclick="showDetails(@item.ID)">Daha Fazla</button>
+            </div>
+        }
+        @if (User.IsInRole("ceo") || User.IsInRole("personel"))
+        {
+            <div style="width: 250px ">
+                <a href="/Urunler/Ekle/" class="btn btn-success" style="margin-top:10px;">
+                    Ürün Ekle
+                </a>
+            </div>
+        }
+    </div>
+
+</body>
+</html>
+
+<script>
+    function showDetails(itemId) {
+        var detailsDiv = document.getElementById("details-" + itemId);
+        if (detailsDiv.style.display === "none") {
+            detailsDiv.style.display = "block";
+        } else {
+            detailsDiv.style.display = "none";
+        }
+    }
+</script>
+
