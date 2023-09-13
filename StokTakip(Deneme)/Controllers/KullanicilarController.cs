@@ -1,4 +1,4 @@
-﻿using StokTakip_Deneme_.Models.Entity;
+using StokTakip_Deneme_.Models.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,27 +59,40 @@ namespace StokTakip_Deneme_.Controllers
         }
 
         [HttpPost]
-        public ActionResult ResetPassword(string email)
+        public ActionResult ResetPasword(Kullanicilar p)
         {
-            var user = db.Kullanicilar.FirstOrDefault(x => x.Email == email);
+            var model = db.Kullanicilar.FirstOrDefault(x => x.Email == p.Email);
 
-            if (user != null)
+            if (model != null)
             {
-                // Yeni bir rastgele şifre oluşturun
-                string yeniSifre = GenerateRandomPassword(8);
-
-                // Kullanıcının şifresini güncelleyin
-                user.Sifre = yeniSifre;
+                Guid rastgele = Guid.NewGuid();
+                model.Sifre = rastgele.ToString().Substring(0, 8);
                 db.SaveChanges();
 
-                // Şifre sıfırlama e-postasını gönder
-                if (SendPasswordResetEmail(user, yeniSifre))
+                SmtpClient sunucu = new SmtpClient("smtp.gmail.com", 587); // Gmail SMTP sunucusu ayarları
+                sunucu.EnableSsl = true;
+                sunucu.UseDefaultCredentials = false;
+
+                MailMessage mail = new MailMessage();
+                mail.From = new MailAddress("testMurat@gmail.com", "Şifre Sıfırlama");
+                mail.To.Add(model.Email);
+                mail.IsBodyHtml = true;
+                mail.Subject = "Şifre Değiştirme İsteği";
+                mail.Body = "Merhaba " + model.AdiSoyadi + "<br/>" +
+                            "Kullanıcı Adınız: " + model.KullaniciAdi + "<br/>" +
+                            "Tek Kullanımlık Şifreniz: " + model.Sifre;
+
+                NetworkCredential net = new NetworkCredential("testMurat@gmail.com", "Kadir123");
+                sunucu.Credentials = net;
+
+                try
                 {
+                    sunucu.Send(mail);
                     return RedirectToAction("Login");
                 }
-                else
+                catch (Exception ex)
                 {
-                    ViewBag.hata = "E-posta gönderirken bir hata oluştu.";
+                    ViewBag.hata = "E-posta gönderirken bir hata oluştu: " + ex.Message;
                     return View();
                 }
             }
@@ -87,44 +100,6 @@ namespace StokTakip_Deneme_.Controllers
             ViewBag.hata = "Girdiğiniz e-posta adresi sistemde bulunamadı.";
             return View();
         }
-
-        private string GenerateRandomPassword(int length)
-        {
-            // Rastgele şifre oluşturma mantığını burada uygulayabilirsiniz
-            // Örnek: https://stackoverflow.com/questions/1344221/how-can-i-generate-random-alphanumeric-strings
-        }
-
-        private bool SendPasswordResetEmail(Kullanicilar user, string yeniSifre)
-        {
-            try
-            {
-                SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587);
-                smtpClient.EnableSsl = true;
-                smtpClient.UseDefaultCredentials = false;
-
-                MailMessage mail = new MailMessage();
-                mail.From = new MailAddress("testMurat@gmail.com", "Şifre Sıfırlama");
-                mail.To.Add(user.Email);
-                mail.IsBodyHtml = true;
-                mail.Subject = "Şifre Değiştirme İsteği";
-                mail.Body = "Merhaba " + user.AdiSoyadi + "<br/>" +
-                            "Kullanıcı Adınız: " + user.KullaniciAdi + "<br/>" +
-                            "Yeni Şifreniz: " + yeniSifre;
-
-                NetworkCredential credentials = new NetworkCredential("testMurat@gmail.com", "Kadir123");
-                smtpClient.Credentials = credentials;
-
-                smtpClient.Send(mail);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                // Hata mesajını günlüğe kaydedebilirsiniz
-                Console.WriteLine("E-posta gönderme hatası: " + ex.Message);
-                return false;
-            }
-        }
-
 
 
         [HttpGet]
